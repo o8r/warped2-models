@@ -14,6 +14,7 @@
 
 #define TS_OFFSET 1
 
+WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(PcsState)
 WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(PcsEvent)
 
 std::vector<std::shared_ptr<warped::Event> > PcsCell::initializeLP() {
@@ -362,7 +363,7 @@ int main(int argc, const char **argv) {
     for (auto& lp : lps) {
         lp_pointers.push_back(&lp);
     }
-    simulation.simulate(lp_pointers);
+    auto status = simulation.simulate(lp_pointers);
 
     unsigned int call_attempts = 0, channel_blocks = 0, handoff_blocks = 0;
     for (auto& lp : lps) {
@@ -374,5 +375,10 @@ int main(int argc, const char **argv) {
     std::cout << "Channel blocks : " << channel_blocks << std::endl;
     std::cout << "Handoff blocks : " << handoff_blocks << std::endl;
 
-    return 0;
+    if (simulation.isMasterProcess()) {
+      std::ofstream ofs { "exit_status", std::ios_base::out | std::ios_base::trunc };
+      ofs << static_cast<int>(status);
+    }
+
+    return static_cast<int>(status);
 }

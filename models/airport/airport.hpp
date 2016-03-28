@@ -15,6 +15,17 @@ WARPED_DEFINE_LP_STATE_STRUCT(AirportState) {
     unsigned int arrivals_;
     unsigned int departures_;
     unsigned int planes_grounded_;
+
+    template <typename Archive>
+    void save(Archive& ar) const {
+      // Do not save the base class!
+      ar(arrivals_, departures_, planes_grounded_);
+    }
+    template <typename Archive>
+    void load(Archive& ar) {
+      // Do not load the base class!
+      ar(arrivals_, departures_, planes_grounded_);
+    }
 };
 
 enum airport_event_t {

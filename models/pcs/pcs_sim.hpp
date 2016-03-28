@@ -14,6 +14,15 @@ WARPED_DEFINE_LP_STATE_STRUCT(PcsState) {
     unsigned int call_attempts_;
     unsigned int channel_blocks_;
     unsigned int handoff_blocks_;
+
+    template <typename Archive>
+    void save(Archive& ar) const {
+      ar(idle_channel_cnt_, call_attempts_, channel_blocks_, handoff_blocks_);
+    }
+    template <typename Archive>
+    void load(Archive& ar) {
+      ar(idle_channel_cnt_, call_attempts_, channel_blocks_, handoff_blocks_);
+    }
 };
 
 enum method_t {

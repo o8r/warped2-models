@@ -2,11 +2,14 @@
 // Ported from the ROSS airport model (https://github.com/carothersc/ROSS/blob/master/ross/models/airport)
 
 #include <cassert>
+#include <fstream>
 #include <random>
 #include "airport.hpp"
 #include "tclap/ValueArg.h"
 
+WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(AirportState)
 WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(AirportEvent)
+//WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(warped::RNGDerived<std::default_random_engine>)
 
 std::vector<std::shared_ptr<warped::Event> > Airport::initializeLP() {
 
@@ -147,7 +150,7 @@ int main(int argc, const char** argv) {
         lp_pointers.push_back(&lp);
     }
 
-    airport_sim.simulate(lp_pointers);
+    auto status = airport_sim.simulate(lp_pointers);
 
     unsigned int arrivals = 0;
     unsigned int departures = 0;
@@ -162,6 +165,12 @@ int main(int argc, const char** argv) {
     std::cout << planes_grounded << " of "  << num_airports_x*num_airports_y*num_planes 
                                             << " planes grounded" << std::endl;
 
-    return 0;
+    // export termination status code to file
+    if (airport_sim.isMasterProcess()) {
+      std::ofstream ofs { "exit_status", std::ios_base::out | std::ios_base::trunc };
+      ofs << static_cast<int>(status);
+    }
+ 
+    return static_cast<int>(status);
 }
 

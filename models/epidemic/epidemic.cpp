@@ -3,6 +3,7 @@
 #include "WattsStrogatzModel.hpp"
 #include "tclap/ValueArg.h"
 
+WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(LocationState)
 WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(EpidemicEvent)
 
 std::vector<std::shared_ptr<warped::Event> > Location::initializeLP() {
@@ -269,7 +270,12 @@ int main(int argc, const char** argv) {
     for (auto& lp : lps) {
         lp_pointers.push_back(&lp);
     }
-    epidemic_sim.simulate(lp_pointers);
+    auto status = epidemic_sim.simulate(lp_pointers);
 
-    return 0;
+    if (epidemic_sim.isMasterProcess()) {
+      std::ofstream ofs { "exit_status", std::ios_base::out | std::ios_base::trunc };
+      ofs << static_cast<int>(status);
+    }
+
+    return static_cast<int>(status);
 }

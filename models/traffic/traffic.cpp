@@ -8,6 +8,7 @@
 
 #define MAX_CARS_ON_ROAD 5
 
+WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(TrafficState)
 WARPED_REGISTER_POLYMORPHIC_SERIALIZABLE_CLASS(TrafficEvent)
 
 std::vector<std::shared_ptr<warped::Event> > Intersection::initializeLP() {
@@ -731,7 +732,7 @@ int main(int argc, const char** argv) {
     for (auto& lp : lps) {
         lp_pointers.push_back(&lp);
     }
-    simulation.simulate(lp_pointers);
+    auto status = simulation.simulate(lp_pointers);
 
     unsigned int total_cars_arrived = 0, total_cars_finished = 0;
     for (auto& lp : lps) {
@@ -741,6 +742,11 @@ int main(int argc, const char** argv) {
     std::cout << "Total cars arrived  : " << total_cars_arrived  << std::endl;
     std::cout << "Total cars finished : " << total_cars_finished << std::endl;
 
-    return 0;
+    if (simulation.isMasterProcess()) {
+      std::ofstream ofs { "exit_status", std::ios_base::out | std::ios_base::trunc };
+      ofs << static_cast<int>(status);
+    }
+
+    return static_cast<int>(status);
 }
 

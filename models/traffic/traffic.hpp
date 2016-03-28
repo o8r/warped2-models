@@ -39,6 +39,31 @@ WARPED_DEFINE_LP_STATE_STRUCT(TrafficState) {
     unsigned int num_out_west_left_;
     unsigned int num_out_west_straight_;
     unsigned int num_out_west_right_;
+
+    template <typename Archive>
+    void save(Archive& ar) const {
+      ar(total_cars_arrived_, total_cars_finished_,
+	 num_in_north_left_, num_in_north_straight_, num_in_north_right_,
+	 num_in_south_left_, num_in_south_straight_, num_in_south_right_,
+	 num_in_east_left_, num_in_east_straight_, num_in_east_right_,
+	 num_in_west_left_, num_in_west_straight_, num_in_west_right_,
+	 num_out_north_left_, num_out_north_straight_, num_out_north_right_,
+	 num_out_south_left_, num_out_south_straight_, num_out_south_right_,
+	 num_out_east_left_, num_out_east_straight_, num_out_east_right_,
+	 num_out_west_left_, num_out_west_straight_, num_out_west_right_);
+    }
+    template <typename Archive>
+    void load(Archive& ar) {
+      ar(total_cars_arrived_, total_cars_finished_,
+	 num_in_north_left_, num_in_north_straight_, num_in_north_right_,
+	 num_in_south_left_, num_in_south_straight_, num_in_south_right_,
+	 num_in_east_left_, num_in_east_straight_, num_in_east_right_,
+	 num_in_west_left_, num_in_west_straight_, num_in_west_right_,
+	 num_out_north_left_, num_out_north_straight_, num_out_north_right_,
+	 num_out_south_left_, num_out_south_straight_, num_out_south_right_,
+	 num_out_east_left_, num_out_east_straight_, num_out_east_right_,
+	 num_out_west_left_, num_out_west_straight_, num_out_west_right_);
+    }
 };
 
 enum traffic_event_t {

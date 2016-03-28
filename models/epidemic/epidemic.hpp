@@ -35,6 +35,15 @@ WARPED_DEFINE_LP_STATE_STRUCT(LocationState) {
     };
 
     std::shared_ptr<std::map <unsigned long, std::shared_ptr<Person>>> current_population_;
+
+    template <typename Archive>
+    void save(Archive& ar) const {
+      ar(current_population_);
+    }
+    template <typename Archive>
+    void load(Archive& ar) {
+      ar(current_population_);
+    }
 };
 
 enum event_type_t {
